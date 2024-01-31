@@ -11,16 +11,16 @@ def split(data, flag):
     test = []
     n = 0
     for i in data:
-        if n == 8:
+        if n == 1:
             valid.append(i)
             n = n+1
             #n = 0
-        elif n == 7:
+        elif n == 0:
             test.append(i)
             n = n+1
         else:
             train.append(i)
-            if n == 9:
+            if n == 5:
                 n = 0
             else:
                 n = n+1
