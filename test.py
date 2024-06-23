@@ -27,7 +27,7 @@ def main():
         normalize
     ])
     
-    test_set = myDataset(root='../Data/temp', transform_x=test_tfm, flag='test',catagory='double')
+    test_set = myDataset(root='../Data/temp', transform_x=test_tfm, flag='test',fold=0)
 
     batch_size = 1
     nw = 1  # number of workers
@@ -91,30 +91,30 @@ def main():
             out.append(soft.numpy()[0][1])
             
             correct = sum(targetsi == predicti for targetsi, predicti in zip(test_labels, predict_y))
-            tp = sum(targetsi and predicti for targetsi, predicti in zip(test_labels, predict_y))  # 真阳
-            ap = sum(test_labels)  # 实阳
-            prep = sum(predict_y)  # 预测是阳
-            tn = sum(1 - (targetsi or predicti) for targetsi, predicti in zip(test_labels, predict_y))  # 真阴
-            an = len(test_labels) - sum(test_labels)  # 实阴
-            pren = len(test_labels) - sum(predict_y)  # 预测是阴
-            num_correct += correct  # 总准确数目
-            num_examples += len(test_labels)  # 总样本量
-            num_tp += tp  # 总真+
-            num_tn += tn  # 总真-
-            num_ap += ap  # 总实+
-            num_an += an  # 总实—
+            tp = sum(targetsi and predicti for targetsi, predicti in zip(test_labels, predict_y)) 
+            ap = sum(test_labels) 
+            prep = sum(predict_y) 
+            tn = sum(1 - (targetsi or predicti) for targetsi, predicti in zip(test_labels, predict_y)) 
+            an = len(test_labels) - sum(test_labels) 
+            pren = len(test_labels) - sum(predict_y) 
+            num_correct += correct 
+            num_examples += len(test_labels) 
+            num_tp += tp 
+            num_tn += tn 
+            num_ap += ap 
+            num_an += an 
             num_prep += prep
             num_pren += pren
 
     val_accurate = acc / test_num
-    yRecall = num_tp / (num_ap+ 1e-8)  # 召回率
+    yRecall = num_tp / (num_ap+ 1e-8) 
     yPrecision = num_tp / (num_prep+ 1e-8)
     yF1 = 2 * yRecall * yPrecision / (yRecall + yPrecision + 1e-8)
-    nRecall = num_tn / (num_an + 1e-8) # 召回率
+    nRecall = num_tn / (num_an + 1e-8)
     nPrecision = num_tn / (num_pren+ 1e-8)
     nF1 = 2 * nRecall * nPrecision / (nRecall + nPrecision + 1e-8)
     print('Test Acc: %.3f' %(val_accurate))
-    print('y召回率={:.3f},y准确度={:.3f},yF1={:.3f} | n召回率={:.3f},n准确度={:.3f},nF1={:.3f},'.format(
+    print('positive recall={:.3f},positive precition={:.3f},yF1={:.3f} | negative recall={:.3f},negative precision={:.3f},nF1={:.3f},'.format(
         yRecall, yPrecision, yF1, nRecall, nPrecision, nF1))  
     
     auc = roc_auc_score(label,out)
