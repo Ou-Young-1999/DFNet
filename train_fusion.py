@@ -35,8 +35,8 @@ def main():
         normalize
     ])
     
-    train_set = myDataset(root='../Data/temp', transform_x=train_tfm, flag='train', catagory='double')
-    valid_set = myDataset(root='../Data/temp', transform_x=test_tfm, flag='valid', catagory='double')
+    train_set = myDataset(root='../Data/temp', transform_x=train_tfm, flag='train', fold=1)
+    valid_set = myDataset(root='../Data/temp', transform_x=test_tfm, flag='valid', fold=1)
 
     batch_size = 16
     nw = 1
@@ -143,18 +143,18 @@ def main():
                 val_acc += torch.eq(predict_y, val_labels.to(device)).sum().item()
                 
                 correct = sum(targetsi == predicti for targetsi, predicti in zip(val_labels.to(device), predict_y))
-                tp = sum(targetsi and predicti for targetsi, predicti in zip(val_labels.to(device), predict_y))  # 真阳
-                ap = sum(val_labels.to(device))  # 实阳
-                prep = sum(predict_y)  # 预测是阳
-                tn = sum(1 - (targetsi or predicti) for targetsi, predicti in zip(val_labels.to(device), predict_y))  # 真阴
-                an = len(val_labels.to(device)) - sum(val_labels.to(device))  # 实阴
-                pren = len(val_labels.to(device)) - sum(predict_y)  # 预测是阴
-                num_correct += correct  # 总准确数目
-                num_examples += len(labels)  # 总样本量
-                num_tp += tp  # 总真+
-                num_tn += tn  # 总真-
-                num_ap += ap  # 总实+
-                num_an += an  # 总实—
+                tp = sum(targetsi and predicti for targetsi, predicti in zip(val_labels.to(device), predict_y)) 
+                ap = sum(val_labels.to(device)) 
+                prep = sum(predict_y)  
+                tn = sum(1 - (targetsi or predicti) for targetsi, predicti in zip(val_labels.to(device), predict_y))  
+                an = len(val_labels.to(device)) - sum(val_labels.to(device))  
+                pren = len(val_labels.to(device)) - sum(predict_y)  
+                num_correct += correct 
+                num_examples += len(labels)  
+                num_tp += tp  
+                num_tn += tn  
+                num_ap += ap  
+                num_an += an 
                 num_prep += prep
                 num_pren += pren
 
@@ -163,13 +163,13 @@ def main():
         print('[epoch %d|%d] train_loss: %.3f  recon_loss: %.8f train_accuracy: %.3f val_loss: %.3f val_accuracy: %.3f' %
               (epoch + 1, epochs, running_loss / train_steps, running_recon_loss1 / train_steps, running_accurate, val_loss / val_steps, val_accurate))
 
-        yRecall = num_tp / (num_ap+ 1e-8)  # 召回率
+        yRecall = num_tp / (num_ap+ 1e-8)  
         yPrecision = num_tp / (num_prep+ 1e-8)
         yF1 = 2 * yRecall * yPrecision / (yRecall + yPrecision + 1e-8)
-        nRecall = num_tn / (num_an + 1e-8) # 召回率
+        nRecall = num_tn / (num_an + 1e-8) 
         nPrecision = num_tn / (num_pren+ 1e-8)
         nF1 = 2 * nRecall * nPrecision / (nRecall + nPrecision + 1e-8)        
-        print('阳性召回率={:.4f},阳性准确度={:.4f},F1={:.4f} | 阴性召回率={:.4f},阴性准确度={:.4f},F1={:.4f},'.format(
+        print('positive recall={:.4f},positive precision={:.4f},F1={:.4f} | negative recall={:.4f},negative precision={:.4f},F1={:.4f},'.format(
             yRecall, yPrecision, yF1, nRecall, nPrecision, nF1
         ))
         
