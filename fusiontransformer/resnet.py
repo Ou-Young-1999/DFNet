@@ -2,13 +2,13 @@ import torch.nn as nn
 import torch
 
 
-class BasicBlock(nn.Module):#18层和34层残差结构
-    expansion = 1#主分支残差结构卷积核个数是否变化
+class BasicBlock(nn.Module):
+    expansion = 1
 
     def __init__(self, in_channel, out_channel, stride=1, downsample=None, **kwargs):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=in_channel, out_channels=out_channel,
-                               kernel_size=3, stride=stride, padding=1, bias=False)#BN操作不需要偏置
+                               kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channel)
         self.relu = nn.ReLU()
         self.conv2 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel,
@@ -19,7 +19,7 @@ class BasicBlock(nn.Module):#18层和34层残差结构
     def forward(self, x):
         identity = x
         if self.downsample is not None:
-            identity = self.downsample(x)#残差虚线结构
+            identity = self.downsample(x)
 
         out = self.conv1(x)
         out = self.bn1(out)
@@ -34,12 +34,9 @@ class BasicBlock(nn.Module):#18层和34层残差结构
         return out
 
 
-class Bottleneck(nn.Module):#更高层的残差结构
+class Bottleneck(nn.Module):
     """
-    注意：原论文中，在虚线残差结构的主分支上，第一个1x1卷积层的步距是2，第二个3x3卷积层步距是1。
-    但在pytorch官方实现过程中是第一个1x1卷积层的步距是1，第二个3x3卷积层步距是2，
-    这么做的好处是能够在top1上提升大概0.5%的准确率。
-    可参考Resnet v1.5 https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch
+    Resnet v1.5 https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch
     """
     expansion = 4
 
@@ -88,8 +85,8 @@ class Bottleneck(nn.Module):#更高层的残差结构
 class ResNet(nn.Module):
 
     def __init__(self,
-                 block,#残差结构种类
-                 blocks_num,#各个残差结构个数
+                 block,
+                 blocks_num,
                  num_classes=512,
                  include_top=True,
                  groups=1,
@@ -120,7 +117,7 @@ class ResNet(nn.Module):
 
     def _make_layer(self, block, channel, block_num, stride=1):
         downsample = None
-        if stride != 1 or self.in_channel != channel * block.expansion:#18和34层直接跳过该语句
+        if stride != 1 or self.in_channel != channel * block.expansion:
             downsample = nn.Sequential(
                 nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
@@ -140,7 +137,7 @@ class ResNet(nn.Module):
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
 
-        return nn.Sequential(*layers)#列表转为非关键字参数
+        return nn.Sequential(*layers)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -151,7 +148,7 @@ class ResNet(nn.Module):
         x = self.layer1(x)#[64,56,56]
         x = self.layer2(x)#[128,28,28]
         x = self.layer3(x)#[256,14,14]
-        emb = self.layer4(x)#[512,7,7],输出图像编码后的特征
+        emb = self.layer4(x)#[512,7,7],
         x = emb
 
         if self.include_top:
