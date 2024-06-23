@@ -5,7 +5,7 @@ import os.path
 import pickle
 import torch
 
-def make_dataset(dir, flag, catagory):
+def make_dataset(dir, flag, fold):
     
     imagesPath = []
     labelsPath = []
