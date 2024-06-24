@@ -178,14 +178,10 @@ def main():
         writer.add_scalar('Loss/valid', val_loss / val_steps, epoch)
         writer.add_scalar('Acc/valid', val_accurate, epoch)
         
-        if val_accurate >= best_acc and yF1 >= 0.5 and nF1 >= 0.5:
+        if val_accurate >= best_acc:
             print('saving acc model')
             best_acc = val_accurate
             torch.save(net.state_dict(), save_path)
-        if (val_loss / val_steps) <= best_loss:
-            print('saving loss model')
-            best_loss = val_loss / val_steps
-            torch.save(net.state_dict(), save_path2)
 
     print('Finished Training')
     
