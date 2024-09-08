@@ -1,4 +1,4 @@
-Decoupling Fusion Network Based on Temporal Embryo Images and Tabular Data for Pregnancy Prediction.
+DeFusion: An Effective Decoupling Fusion Network for Multi-Modal Pregnancy Prediction
 
 
 Python==3.8
