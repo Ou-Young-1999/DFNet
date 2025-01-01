@@ -58,7 +58,7 @@ class myDataset(data.Dataset):
 
     def __init__(self, root, transform_x=None, flag='train', fold=1):
 
-        image, label, clinical = make_dataset(root, flag, catagory)
+        image, label, clinical = make_dataset(root, flag, fold)
         self.flag = flag
         self.transform = transform_x
         self.imagePath = image
