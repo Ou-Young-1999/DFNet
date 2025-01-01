@@ -51,17 +51,6 @@ def main():
                                                   batch_size=batch_size, shuffle=False,
                                                   num_workers=nw)
     net = DecoupleFusioner()
-    # load pretrain weights
-    fusiontransformer_path = "./fusiontransformer/fusiontransformer.pth"
-    tabtransformer_path = "./tabtransformer/tabtransformer.pth"
-
-    print("Load FusionTransformer Model.")
-    assert os.path.exists(fusiontransformer_path), "file {} does not exist.".format(fusiontransformer_path)
-    net.img_extractor.load_state_dict(torch.load(fusiontransformer_path, map_location='cpu'))
-
-    print("Load TabTransformer Model.")
-    assert os.path.exists(tabtransformer_path), "file {} does not exist.".format(tabtransformer_path)
-    net.cli_extractor.load_state_dict(torch.load(tabtransformer_path, map_location='cpu'))
 
     # for param in net.img_extractor.parameters():
     #     param.requires_grad = False
